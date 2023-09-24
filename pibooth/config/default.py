@@ -160,7 +160,7 @@ add_default_option("CAMERA", "flip", False,
 add_default_option("CAMERA", "rotation", 0,
                    "Rotation of the camera: 0, 90, 180 or 270, can be different for preview and capture (list of integers accepted)")
 
-add_default_option("CAMERA", "resolution", (1934, 2464),
+add_default_option("CAMERA", "resolution", (4608, 2592),
                    "Resolution for camera captures (preview will have same aspect ratio)")
 
 add_default_option("CAMERA", "delete_internal_memory", False,

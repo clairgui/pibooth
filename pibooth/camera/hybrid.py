@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from pibooth.camera.libcamera import LibCamera
+from pibooth.camera.libcamera_v3 import LibCamera
 from pibooth.camera.rpi import RpiCamera
 from pibooth.camera.opencv import CvCamera
 from pibooth.camera.gphoto import GpCamera

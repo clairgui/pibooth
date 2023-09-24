@@ -36,7 +36,7 @@ class BaseCamera:
         self._rect = None
         self._overlay = None
         self._overlay_text = None
-        self._overlay_alpha = 60
+        self._overlay_alpha = 250
         self._captures = []
         self._worker = None
 
@@ -69,7 +69,7 @@ class BaseCamera:
         """
         pass
 
-    def set_overlay(self, text, alpha=60):
+    def set_overlay(self, text, alpha = 250):
         """Show a text over on the preview.
         """
         if self._rect is None:
@@ -86,7 +86,7 @@ class BaseCamera:
         as an overlay for the camera.
         """
         image = Image.new('RGBA', size)
-        width, height = 0.9 * size[0], 0.9 * size[1]
+        width, height = 0.5 * size[0], 0.5 * size[1]
         posx, posy = (size[0] - width) // 2, (size[1] - height) // 2
         write_on_pil_image(image, text, posx, posy, width, height, color=(255, 255, 255, alpha))
         return image
@@ -113,6 +113,8 @@ class BaseCamera:
     def preview(self, rect, flip=True):
         """Start the preview fitting the given Rect object.
         """
+        LOGGER.debug("In preview in base.py")
+        
         if self._worker and self._worker.is_alive():
             LOGGER.warning("Can not start preview, capture or preview already running")
             return

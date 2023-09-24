@@ -12,6 +12,9 @@ from PIL import ImageFilter
 from pibooth.pictures import sizing
 from pibooth.utils import LOGGER
 from pibooth.camera.base import BaseCamera
+from pibooth.tasks import AsyncTask
+from pibooth import evts
+import time
 
 
 def get_libcamera_camera_proxy(port=None):
@@ -45,27 +48,47 @@ class LibCamera(BaseCamera):
 
     def __init__(self, libcamera_camera_proxy):
         super().__init__(libcamera_camera_proxy)
+        # self._preview_config = self._cam.create_preview_configuration(raw=self._cam.sensor_modes[1], display='raw')
         self._preview_config = self._cam.create_preview_configuration()
+        # self._preview_config = self._cam.create_still_configuration()
         self._capture_config = self._cam.create_still_configuration()
 
     def _specific_initialization(self):
         """Camera initialization.
         """
         self._cam.stop()
-        self._preview_config['format'] = 'BGR888'
-        self._preview_config['transform'] = Transform(rotation=self.preview_rotation, hflip=self.preview_flip)
+
+        # utilisation de la transformation par défaut
+        self._preview_config['transform'] = Transform(hflip=True)
+        # un buffer de 6 permet moins de latence lors de la preview
+        self._preview_config['buffer_count'] = 3
+        # Queue = false pour la preview 
+        self._preview_config['queue'] = True
+        # Format from lore YUV420 not supported by PIL image
+        self._preview_config['format'] = 'RGB888'
+
+        h = 300
+        l = round(h*1.777) # 1920
+        if(l%2 > 0):
+            # size should be even numbers 
+            l = l + 1 
+        self._preview_config['main']['size'] = (l,h)
+        self._cam.align_configuration(self._preview_config)
+
+        # améliore la qualité de l'image
+        self._cam.options["quality"] = 95 
+        self._cam.options["compress_level"] = 0
         self._cam.configure(self._preview_config)
 
-        self._capture_config['size'] = self.resolution
-        self._capture_config['transform'] = Transform(rotation=self.capture_rotation, hflip=self.capture_flip)
-        self._cam.configure(self._preview_config)
+        self._cam.configure(self._capture_config)
         self._cam.start()
 
     def _show_overlay(self):
         """Add an image as an overlay.
         """
-        self._overlay = self._build_overlay(self._rect.size, self._overlay_text, self._overlay_alpha)
-        self._cam.set_overlay(numpy.array(self._overlay))
+        self._overlay = self._build_overlay(self._preview_config['main']['size'], self._overlay_text, self._overlay_alpha)
+        # self._cam.set_overlay(numpy.array(self._overlay))
+        # LOGGER.debug("overlay text '%s'" , self._overlay_text)
 
     def _hide_overlay(self):
         """Remove any existing overlay.
@@ -89,22 +112,43 @@ class LibCamera(BaseCamera):
     def get_preview_image(self):
         """Capture a new picture in a file.
         """
-        return self._cam.capture_image('main')
+        image = self._cam.capture_image('main')
+        if self._overlay is not None:
+            image.paste(self._overlay, (0, 0), self._overlay)
+        return image
 
     def preview(self, rect, flip=True):
         """Display a preview on the given Rect (flip if necessary).
         """
+        LOGGER.debug("In preview in libcamera")
         # Define Rect() object for resizing preview captures to fit to the defined
         # preview rect keeping same aspect ratio than camera resolution.
-        size = sizing.new_size_keep_aspect_ratio(self.resolution, (min(
-            rect.width, self._cam.sensor_resolution[0]), min(rect.height, self._cam.sensor_resolution[1])))
-        rect = pygame.Rect(rect.centerx - size[0] // 2, rect.centery - size[1] // 2,
-                           size[0] - size[0] % 2, size[1] - size[1] % 2)
+        # size = sizing.new_size_keep_aspect_ratio(
+        #     self.resolution, 
+        #     (min(rect.width, self._cam.sensor_resolution[0]), 
+        #      min(rect.height, self._cam.sensor_resolution[1])))
+        # size = sizing.new_size_keep_aspect_ratio(
+        #     self.resolution, 
+        #     (float(self._cam.sensor_resolution[0]), 
+        #     float(self._cam.sensor_resolution[1])))
+        # rect = pygame.Rect(rect.centerx - size[0] // 2, rect.centery - size[1] // 2,
+        #                    size[0], size[1],)
+        LOGGER.debug("Resolution '%d', '%d'",self.resolution[0], self.resolution[1])
+        LOGGER.debug("rectg '%d', '%d'",
+                     rect.size[0], 
+                    rect.size[1])
+        # size = sizing.new_size_keep_aspect_ratio(self.resolution, (rect.width, rect.height))
+        # rect = pygame.Rect(rect.centerx - size[0] // 2, rect.centery - size[1] // 2, size[0], size[1])
 
-        self._preview_config['main']['size'] = rect.size
-        self._preview_config['transform'] = Transform(rotation=self.preview_rotation, hflip=self.preview_flip)
+
+        # self._preview_config['main']['size'] = rect.size # prend du temps
+        # # self._preview_config['main']['size'] = (self._cam.sensor_resolution[0]//2,self._cam.sensor_resolution[0]//2) # prend du temps
+        # # self._preview_config['transform'] = Transform()
         self._cam.switch_mode(self._preview_config)
+        # self._cam.switch_mode(self._capture_config) # fonctionne mais est lent
+        # image complète mais ne rempli pas tout le rectangle => Modifier la taille du rectangle pour la preview
         super().preview(rect, flip)
+
 
     def get_capture_image(self, effect=None):
         """Capture a new picture in a file.

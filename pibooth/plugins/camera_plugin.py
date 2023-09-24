@@ -69,7 +69,8 @@ class CameraPlugin:
     def state_preview_do(self, cfg, app):
         if cfg.getboolean('WINDOW', 'preview_countdown'):
             if self.timer.remaining() > 0.5:
-                app.camera.set_overlay(math.ceil(self.timer.remaining()))
+                # Timer 
+                app.camera.set_overlay(math.ceil(self.timer.remaining())) 
         if self.timer.remaining() <= 0.5:
             app.camera.set_overlay(get_translated_text('smile'))
 

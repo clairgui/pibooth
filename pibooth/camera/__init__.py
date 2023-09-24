@@ -4,7 +4,7 @@ from pibooth.utils import LOGGER
 from pibooth.camera.rpi import RpiCamera, get_rpi_camera_proxy
 from pibooth.camera.gphoto import GpCamera, get_gp_camera_proxy
 from pibooth.camera.opencv import CvCamera, get_cv_camera_proxy
-from pibooth.camera.libcamera import LibCamera, get_libcamera_camera_proxy
+from pibooth.camera.libcamera_v3 import LibCamera, get_libcamera_camera_proxy
 from pibooth.camera.hybrid import HybridLibCamera, HybridRpiCamera, HybridCvCamera
 
 
