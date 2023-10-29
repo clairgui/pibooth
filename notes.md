@@ -17,3 +17,5 @@ Pour le format de photo, celui ci s'adapte au template, 1 photo, 2 photos, 3 pho
 Dans tous les cas les formats ne sont pas identique. A voir comment les faire correspondre avec la preview. 
 
 14/10/2023: Version de pillow > 10.0 incomptable pour pibooth template pour le moment 
+
+29/10/2023: croper les photos à la bonne taille (taille de preview)

@@ -107,6 +107,14 @@ class LibCamera(BaseCamera):
         image, effect = capture_data
         if effect != 'none':
             image = image.filter(getattr(ImageFilter, effect.upper()))
+        
+        # Cropping
+        width, height = image.size
+        left = 800
+        top = 400
+        right = width - 800
+        bottom = height - 400
+        image = image.crop((left, top, right, bottom))
         return image
 
     def get_preview_image(self):
