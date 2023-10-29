@@ -15,3 +15,5 @@ Une fenetre en 720 * 1280 (ratio de 1.77) ne donne pas le même rendu qu'une fen
 Il faut donc jouer sur ce ratio pour avoir une image de preview correspondant au format de photo voulu.
 Pour le format de photo, celui ci s'adapte au template, 1 photo, 2 photos, 3 photos ou 4 photos.
 Dans tous les cas les formats ne sont pas identique. A voir comment les faire correspondre avec la preview. 
+
+14/10/2023: Version de pillow > 10.0 incomptable pour pibooth template pour le moment 
