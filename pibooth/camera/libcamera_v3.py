@@ -49,9 +49,16 @@ class LibCamera(BaseCamera):
     def __init__(self, libcamera_camera_proxy):
         super().__init__(libcamera_camera_proxy)
         # self._preview_config = self._cam.create_preview_configuration(raw=self._cam.sensor_modes[1], display='raw')
-        self._preview_config = self._cam.create_preview_configuration()
-        # self._preview_config = self._cam.create_still_configuration()
+        # self._preview_config = self._cam.create_preview_configuration()
+        self._preview_config = self._cam.create_still_configuration()
         self._capture_config = self._cam.create_still_configuration()
+
+        # Croping value
+        self.vertical = 0 # 400 for preview
+        self.horizontal = 0 # 800 for preview
+
+        # Preview size
+        self.height_size = 200
 
     def _specific_initialization(self):
         """Camera initialization.
@@ -67,8 +74,8 @@ class LibCamera(BaseCamera):
         # Format from lore YUV420 not supported by PIL image
         self._preview_config['format'] = 'RGB888'
 
-        h = 300
-        l = round(h*1.777) # 1920
+        h = self.height_size
+        l = round(self.height_size*1.777) # 1920
         if(l%2 > 0):
             # size should be even numbers 
             l = l + 1 
@@ -110,10 +117,10 @@ class LibCamera(BaseCamera):
         
         # Cropping
         width, height = image.size
-        left = 800
-        top = 400
-        right = width - 800
-        bottom = height - 400
+        left = self.horizontal
+        top = self.vertical
+        right = width - self.horizontal
+        bottom = height - self.vertical
         image = image.crop((left, top, right, bottom))
         return image
 

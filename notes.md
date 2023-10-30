@@ -18,4 +18,5 @@ Dans tous les cas les formats ne sont pas identique. A voir comment les faire co
 
 14/10/2023: Version de pillow > 10.0 incomptable pour pibooth template pour le moment 
 
-29/10/2023: croper les photos à la bonne taille (taille de preview)
+29/10/2023: croper les photos à la bonne taille (taille de preview) ou 
+réduire la qualité du flux video pour le mode preview self._preview_config['main']['size'] = (l,h) en choisisant de créer une preview avec le mode "still configuration" 
