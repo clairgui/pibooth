@@ -6,6 +6,7 @@ from pibooth import evts, fonts
 from pibooth.language import get_translated_text
 from pibooth.view.pygame.window import PygameScene
 from pibooth.view.pygame.sprites import LeftArrowSprite, RightArrowSprite, ImageSprite, TextSprite
+from pibooth.utils import LOGGER
 
 
 class WaitScene(PygameScene):
@@ -111,7 +112,8 @@ class WaitScene(PygameScene):
             self.image.show()
             self.image_check.hide()
             self.printer_ongoing_timer.reset()
-
+        
+        # LOGGER.debug("update scene wait")
         super().update(events)
 
     def update_print_action(self, enabled=True):

@@ -250,7 +250,7 @@ class PygameWindow(BaseWindow):
 
         pygame.display.set_caption(title)
         self.display_size = (info.current_w, info.current_h)
-        self.surface = pygame.display.set_mode(self._size, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
+        self.surface = pygame.display.set_mode(self.display_size, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
         self.background_sprite = sprites.ImageSprite(None, size=size, outlines=False,
                                                      layer=sprites.LAYER_BACKGROUND)
         self.set_background(self.bg_color_or_path)
