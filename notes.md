@@ -20,3 +20,8 @@ Dans tous les cas les formats ne sont pas identique. A voir comment les faire co
 
 29/10/2023: croper les photos à la bonne taille (taille de preview) ou 
 réduire la qualité du flux video pour le mode preview self._preview_config['main']['size'] = (l,h) en choisisant de créer une preview avec le mode "still configuration" 
+
+20/11/2023: dans view/pygame/scenes/choose.py, l'action de valider le choix du nombre de photo se fait par l'appuis sur la photo 'thumb.png'.
+Avant même de définir la photo dans cette zone, la fonction d'appuis se fait dans l'init par :
+self.left_arrow.on_pressed = lambda: evts.post(evts.EVT_PIBOOTH_CAPTURE)
+Il faut voir si cela est possible de définir une zone au dessus du slider afin de définir une zone d'appuis pour valider également en appuyant directement sur l'image centrale du slider

@@ -6,7 +6,7 @@ from pibooth import evts
 from pibooth import pictures
 from pibooth.language import get_translated_text
 from pibooth.view.pygame.window import PygameScene
-from pibooth.view.pygame.sprites import LeftArrowSprite, RightArrowSprite, TextSprite
+from pibooth.view.pygame.sprites import OutlinesSprite, LeftArrowSprite, RightArrowSprite, TextSprite
 
 
 class Renderer(ImSliderRenderer):
@@ -55,6 +55,8 @@ class ChooseScene(PygameScene):
         self.choices = ()
         self.slider = ImSlider((200, 100), focus=False, renderer=Renderer(self), stype=STYPE_LOOP)
         self.text = TextSprite(self, get_translated_text('choose'))
+        self.text2 = TextSprite(self, get_translated_text('chosen'))
+        self.text2.on_pressed = lambda: evts.post(evts.EVT_PIBOOTH_CAPTURE)
         self.left_arrow = LeftArrowSprite(self)
         self.right_arrow = RightArrowSprite(self)
 
@@ -72,6 +74,11 @@ class ChooseScene(PygameScene):
             self.slider.set_arrows_visible(True)
         self.slider.set_position(x, y)
         self.slider.set_size(slider_width, slider_height)
+
+        # On select
+        self.text2.set_text(get_translated_text('chosen'))  # In case of text has changed
+
+        self.text2.set_rect(x+slider_width//4,y,slider_width//2, slider_height)
 
         # Text
         self.text.set_text(get_translated_text('choose'))  # In case of text has changed
